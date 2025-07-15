@@ -1,5 +1,6 @@
 using System.Collections;
 using UnityEngine;
+using UnityEngine.UI;
 using Random = UnityEngine.Random;
 
 public class SceneController : MonoBehaviour
@@ -12,7 +13,12 @@ public class SceneController : MonoBehaviour
     public float originalY = -2.5f;
     public GameObject cardPrefab;
     public Sprite[] images;
-
+    public Text scoreLabel;
+    public Text stepLabel;
+    public GameObject winning;
+    
+    private int _score;
+    private int _step;
     private MemoryCard _first; // 第1次点击的卡片
     private MemoryCard _second; // 第2次点击的卡片
 
@@ -20,6 +26,8 @@ public class SceneController : MonoBehaviour
 
     private void Start()
     {
+        winning.SetActive(false);
+        
         int[] nums = {0, 0, 1, 1, 2, 2, 3, 3, 4, 4, 5, 5};
         Shuffle(nums);
         
@@ -60,6 +68,8 @@ public class SceneController : MonoBehaviour
         }
         
         _second = card;
+        _step++;
+        stepLabel.text = $"Step: {_step}";
         StartCoroutine(CheckMatch());
     }
 
@@ -70,6 +80,10 @@ public class SceneController : MonoBehaviour
             // 匹配成功
             _first.MatchSuccess();
             _second.MatchSuccess();
+            _score++;
+            scoreLabel.text = $"Score: {_score}";
+            if(_score == (gridRows * gridCols / 2))
+                winning.SetActive(true);
         }
         else
         {
